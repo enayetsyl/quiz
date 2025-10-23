@@ -9,7 +9,9 @@ describe("health endpoints", () => {
     const response = await request(app).get("/healthz");
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("status", "ok");
+    expect(response.body.success).toBe(true);
+    expect(response.body.data).toMatchObject({
+      status: "ok"
+    });
   });
 });
-

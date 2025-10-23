@@ -26,7 +26,8 @@ module.exports = {
           "./apps/api/tsconfig.json",
           "./apps/web/tsconfig.json",
           "./packages/shared/tsconfig.json"
-        ]
+        ],
+        alwaysTryTypes: true
       },
       node: {
         extensions: [".js", ".jsx", ".ts", ".tsx", ".d.ts"]
@@ -51,6 +52,7 @@ module.exports = {
         pathGroupsExcludedImportTypes: ["builtin"]
       }
     ],
+    "import/no-named-as-default": "off",
     "import/no-named-as-default-member": "off"
   }
 };

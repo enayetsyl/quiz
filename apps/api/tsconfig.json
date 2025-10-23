@@ -4,7 +4,8 @@
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
-      "@quizgen/shared": ["../../packages/shared/src"]
+      "@quizgen/shared": ["../../packages/shared/src"],
+      "@/*": ["src/*"]
     }
   },
   "include": ["src", "tests", "vitest.config.ts"]

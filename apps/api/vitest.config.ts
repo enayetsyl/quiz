@@ -16,7 +16,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@quizgen/shared": resolve(__dirname, "../../packages/shared/src")
+      "@quizgen/shared": resolve(__dirname, "../../packages/shared/src"),
+      "@": resolve(__dirname, "./src")
     }
   }
 });

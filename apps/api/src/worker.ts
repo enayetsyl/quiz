@@ -1,35 +1,34 @@
 import { Queue, Worker } from "bullmq";
 import IORedis from "ioredis";
 
-const connection = new IORedis(process.env.REDIS_URL ?? "redis://localhost:6379");
+import { env } from "@/config";
+import { logger } from "@/lib/logger";
+
+const connection = new IORedis(env.REDIS_URL);
 
 const generationQueue = new Queue("generation", { connection });
 
-// Placeholder processor – replace with real implementation later
 const worker = new Worker(
   "generation",
   async (job) => {
-    // eslint-disable-next-line no-console
-    console.log(`Processing job ${job.id} with data`, job.data);
+    logger.info({ jobId: job.id }, "Processing generation job");
+    // TODO: implement generation pipeline logic
   },
   {
     connection,
-    concurrency: Number(process.env.WORKER_CONCURRENCY ?? "5")
+    concurrency: env.WORKER_CONCURRENCY
   }
 );
 
 worker.on("completed", (job) => {
-  // eslint-disable-next-line no-console
-  console.log(`Job ${job.id} completed`);
+  logger.info({ jobId: job.id }, "Job completed");
 });
 
 worker.on("failed", (job, err) => {
-  // eslint-disable-next-line no-console
-  console.error(`Job ${job?.id} failed`, err);
+  logger.error({ jobId: job?.id, err }, "Job failed");
 });
 
 void generationQueue.waitUntilReady().then(() => {
-  // eslint-disable-next-line no-console
-  console.log("Worker connected to Redis queue");
+  logger.info("Worker connected to Redis queue");
 });
 
