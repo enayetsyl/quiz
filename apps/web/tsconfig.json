@@ -7,9 +7,7 @@
     "allowJs": false,
     "noEmit": true,
     "incremental": true,
-    "types": [
-      "node"
-    ],
+    "types": ["node", "vitest/globals", "@testing-library/jest-dom"],
     "plugins": [
       {
         "name": "next"

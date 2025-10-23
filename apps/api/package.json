@@ -37,6 +37,7 @@
     "prettier": "^3.3.3",
     "prisma": "^5.17.0",
     "supertest": "^6.3.4",
+    "@types/supertest": "^2.0.16",
     "tslib": "^2.6.2",
     "tsx": "^4.16.2",
     "vite-tsconfig-paths": "^4.3.1",
