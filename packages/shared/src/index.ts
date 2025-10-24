@@ -155,3 +155,95 @@ export const formatDisplayDateTime = (
     minute: "numeric"
   }).format(date);
 
+export type QuestionStatus = "not_checked" | "approved" | "rejected" | "needs_fix";
+
+export type QuestionDifficulty = "easy" | "medium" | "hard";
+
+export type QuestionOptionKey = "a" | "b" | "c" | "d";
+
+export type QuestionBankEntryDto = {
+  id: string;
+  seqNo: number | null;
+  subjShortCode: string | null;
+  createdAt: string;
+};
+
+export type QuestionReviewItemDto = {
+  id: string;
+  pageId: string;
+  pageNumber: number;
+  pageImageUrl: string;
+  pageThumbnailUrl: string;
+  classId: number;
+  subjectId: string;
+  chapterId: string;
+  status: QuestionStatus;
+  difficulty: QuestionDifficulty;
+  language: "bn" | "en";
+  lineIndex: number;
+  stem: string;
+  optionA: string;
+  optionB: string;
+  optionC: string;
+  optionD: string;
+  correctOption: QuestionOptionKey;
+  explanation: string;
+  isLockedAfterAdd: boolean;
+  questionBankEntry: QuestionBankEntryDto | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type QuestionStatusCounts = Record<QuestionStatus, number>;
+
+export type QuestionListResponse = {
+  items: QuestionReviewItemDto[];
+  total: number;
+  statusCounts: QuestionStatusCounts;
+};
+
+export type QuestionListFilters = {
+  classId?: number;
+  subjectId?: string;
+  chapterId?: string;
+  pageId?: string;
+  status?: QuestionStatus | "all";
+};
+
+export type QuestionUpdatePayload = {
+  stem: string;
+  optionA: string;
+  optionB: string;
+  optionC: string;
+  optionD: string;
+  correctOption: QuestionOptionKey;
+  explanation: string;
+  difficulty: QuestionDifficulty;
+};
+
+export type QuestionBulkStatusPayload = {
+  questionIds: string[];
+  status: QuestionStatus;
+};
+
+export type QuestionBulkDeletePayload = {
+  questionIds: string[];
+};
+
+export type QuestionBulkPublishPayload = {
+  questionIds: string[];
+};
+
+export type QuestionBulkStatusResult = {
+  updatedIds: string[];
+};
+
+export type QuestionBulkDeleteResult = {
+  deletedIds: string[];
+};
+
+export type QuestionBulkPublishResult = {
+  publishedIds: string[];
+  questionBankEntryIds: string[];
+};
+

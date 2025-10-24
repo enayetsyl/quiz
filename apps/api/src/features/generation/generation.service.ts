@@ -229,6 +229,18 @@ export const regeneratePage = async (
     throw new ApiError(StatusCodes.NOT_FOUND, "Page not found");
   }
 
+  const lockedQuestion = await prisma.question.findFirst({
+    where: { pageId, isLockedAfterAdd: true },
+    select: { id: true },
+  });
+
+  if (lockedQuestion) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      "This page contains questions already published to the Question Bank",
+    );
+  }
+
   await prisma.$transaction(async (tx) => {
     await tx.question.deleteMany({ where: { pageId } });
     await tx.page.update({
