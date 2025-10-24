@@ -5,9 +5,9 @@ import axios, {
   isAxiosError
 } from "axios";
 
-import type { ApiErrorResponse, ApiResponse } from "@quizgen/shared";
-
 import { toast } from "@/lib/toast";
+
+import type { ApiErrorResponse, ApiResponse } from "@quizgen/shared";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api";

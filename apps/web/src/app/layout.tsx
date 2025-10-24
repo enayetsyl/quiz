@@ -2,17 +2,18 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 
-import { AppProviders } from "./providers";
-import "./globals.css";
+import { cn } from "@/lib/utils";
 
 import { appName } from "@quizgen/shared";
-import { cn } from "@/lib/utils";
+
+import "./globals.css";
+import { AppProviders } from "./providers";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: appName,
-  description: "Internal tooling for quiz generation and review."
+  description: "Internal tooling for quiz generation and review.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

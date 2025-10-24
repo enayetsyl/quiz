@@ -1,8 +1,9 @@
-import { renderWithProviders } from "./test-utils";
 import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { HomePageContent } from "@/features/home/components/home-page-content";
+
+import { renderWithProviders } from "./test-utils";
 
 const mockRefetch = vi.fn(() => Promise.resolve({}));
 

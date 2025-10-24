@@ -1,11 +1,11 @@
 'use client';
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import type { PropsWithChildren } from "react";
-import { useState } from "react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import type { PropsWithChildren } from 'react';
+import { useState } from 'react';
 
-import { ToastViewport } from "@/components/ui/toast-viewport";
+import { Toaster } from '@/components/ui/toaster';
 
 const createQueryClient = () =>
   new QueryClient({
@@ -27,8 +27,8 @@ export const AppProviders = ({ children }: PropsWithChildren): JSX.Element => {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ToastViewport />
-      {process.env.NODE_ENV !== "production" ? (
+      <Toaster />
+      {process.env.NODE_ENV !== 'production' ? (
         <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
       ) : null}
     </QueryClientProvider>
