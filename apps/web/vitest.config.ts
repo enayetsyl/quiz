@@ -20,6 +20,15 @@ export default defineConfig({
   resolve: {
     alias: {
       "@quizgen/shared": resolve(__dirname, "../../packages/shared/src"),
+      "@tanstack/react-query": resolve(
+        __dirname,
+        "../../packages/tanstack-react-query/src"
+      ),
+      "@tanstack/react-query-devtools": resolve(
+        __dirname,
+        "../../packages/tanstack-react-query-devtools/src"
+      ),
+      axios: resolve(__dirname, "../../packages/axios/src"),
       "@": resolve(__dirname, "./src")
     }
   }

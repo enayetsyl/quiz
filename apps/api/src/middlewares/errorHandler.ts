@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 
 import { env } from "@/config";
 import { ApiError } from "@/lib/apiError";
-import { logger } from "@/lib/logger";
+import { getRequestLogger } from "@/lib/requestContext";
 import { sendResponse } from "@/lib/sendResponse";
 
 export const errorHandler = (
@@ -26,7 +26,8 @@ export const errorHandler = (
     details = err instanceof Error ? err.stack : err;
   }
 
-  logger.error({ err, statusCode }, "Request failed");
+  const requestLogger = getRequestLogger();
+  requestLogger.error({ err, statusCode }, "Request failed");
 
   return sendResponse(res, statusCode, {
     success: false,

@@ -16,6 +16,9 @@
   },
   "dependencies": {
     "@quizgen/shared": "0.1.0",
+    "@tanstack/react-query": "file:../../packages/tanstack-react-query",
+    "@tanstack/react-query-devtools": "file:../../packages/tanstack-react-query-devtools",
+    "axios": "file:../../packages/axios",
     "next": "^14.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

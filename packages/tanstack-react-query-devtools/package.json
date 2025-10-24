@@ -1,0 +1,24 @@
+{
+  "name": "@tanstack/react-query-devtools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "prebuild": "tsc --build --clean tsconfig.json",
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "echo 'no tests for tanstack-react-query-devtools stub'"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

@@ -3,6 +3,7 @@ import IORedis from "ioredis";
 
 import { env } from "@/config";
 import { logger } from "@/lib/logger";
+import { prisma } from "@/lib/prisma";
 
 const connection = new IORedis(env.REDIS_URL);
 
@@ -31,4 +32,28 @@ worker.on("failed", (job, err) => {
 void generationQueue.waitUntilReady().then(() => {
   logger.info("Worker connected to Redis queue");
 });
+
+const gracefulShutdown = async (signal: NodeJS.Signals) => {
+  logger.info({ signal }, "Shutting down worker");
+  try {
+    await worker.close();
+    await generationQueue.close();
+    await connection.quit();
+    logger.info("Queue connections closed");
+  } catch (error) {
+    logger.error({ error }, "Failed to close queue resources");
+  }
+
+  try {
+    await prisma.$disconnect();
+    logger.info("Database connection closed");
+  } catch (error) {
+    logger.error({ error }, "Failed to disconnect Prisma client");
+  }
+
+  process.exit(0);
+};
+
+process.on("SIGINT", gracefulShutdown);
+process.on("SIGTERM", gracefulShutdown);
 

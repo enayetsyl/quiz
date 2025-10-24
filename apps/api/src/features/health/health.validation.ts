@@ -3,11 +3,19 @@ import { z } from "zod";
 export const healthCheckSchema = z.object({
   query: z.object({
     details: z
-      .string()
+      .union([z.string(), z.boolean()])
       .optional()
-      .transform((value) =>
-        value === undefined ? undefined : value === "true" || value === "1"
-      )
+      .transform((value) => {
+        if (typeof value === "boolean") {
+          return value;
+        }
+
+        if (typeof value === "string") {
+          return value === "true" || value === "1";
+        }
+
+        return undefined;
+      })
   }),
   params: z.object({}),
   body: z.object({})

@@ -2,7 +2,7 @@ import os from "node:os";
 
 import { env } from "@/config";
 
-import type { HealthCheckResponse } from "./health.types";
+import type { HealthCheckResponse } from "@quizgen/shared";
 
 export const getHealthStatus = (showDetails = false): HealthCheckResponse => {
   const payload: HealthCheckResponse = {

@@ -2,6 +2,7 @@ import { createServer } from "http";
 
 import { env } from "@/config";
 import { logger } from "@/lib/logger";
+import { prisma } from "@/lib/prisma";
 
 import { createApp } from "./app";
 
@@ -16,8 +17,14 @@ server.listen(PORT, () => {
 
 const shutdown = (signal: NodeJS.Signals) => {
   logger.info({ signal }, "Shutting down server");
-  server.close(() => {
+  server.close(async () => {
     logger.info("HTTP server closed");
+    try {
+      await prisma.$disconnect();
+      logger.info("Database connection closed");
+    } catch (error) {
+      logger.error({ error }, "Failed to disconnect Prisma client");
+    }
     process.exit(0);
   });
 };
