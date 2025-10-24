@@ -159,6 +159,84 @@ export type QuestionStatus = "not_checked" | "approved" | "rejected" | "needs_fi
 
 export type QuestionDifficulty = "easy" | "medium" | "hard";
 
+export type QuestionExportFilters = {
+  classId?: number;
+  subjectId?: string;
+  chapterId?: string;
+  pageNumber?: number;
+  status?: QuestionStatus;
+};
+
+export type QuestionExportRow = {
+  questionId: string;
+  classId: number;
+  subjectName: string;
+  chapterName: string;
+  pageNumber: number;
+  language: string | null;
+  difficulty: QuestionDifficulty | null;
+  stem: string;
+  optionA: string;
+  optionB: string;
+  optionC: string;
+  optionD: string;
+  correctOption: string;
+  explanation: string | null;
+  status: QuestionStatus;
+  createdAt: string;
+  sourcePageImageUrl: string | null;
+};
+
+export type QuestionExportResponse = {
+  items: QuestionExportRow[];
+};
+
+export type QuestionBankExportFilters = {
+  classId?: number;
+  subjectId?: string;
+  chapterId?: string;
+  pageNumber?: number;
+};
+
+export type QuestionBankExportRow = {
+  questionBankId: string;
+  subjectShortCode: string | null;
+  sequenceNumber: number | null;
+  classId: number;
+  subjectName: string;
+  chapterName: string;
+  pageNumber: number | null;
+  language: string | null;
+  difficulty: QuestionDifficulty | null;
+  stem: string;
+  optionA: string;
+  optionB: string;
+  optionC: string;
+  optionD: string;
+  correctOption: string;
+  explanation: string | null;
+  createdAt: string;
+  sourcePageImageUrl: string | null;
+};
+
+export type QuestionBankExportResponse = {
+  items: QuestionBankExportRow[];
+};
+
+export type InternalApprovedQuestionsQuery = QuestionExportFilters & {
+  limit?: number;
+  offset?: number;
+};
+
+export type InternalApprovedQuestionsResponse = {
+  items: QuestionExportRow[];
+  meta: {
+    total: number;
+    limit: number;
+    offset: number;
+  };
+};
+
 export type QuestionOptionKey = "a" | "b" | "c" | "d";
 
 export type QuestionBankEntryDto = {

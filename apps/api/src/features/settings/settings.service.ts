@@ -11,6 +11,11 @@ const ensureSettings = async () =>
     create: { id: SETTINGS_ID }
   });
 
+export const getApiBearerTokenHash = async (): Promise<string | null> => {
+  const settings = await ensureSettings();
+  return settings.apiBearerTokenHash ?? null;
+};
+
 export const getAppSettings = async () => {
   const settings = await ensureSettings();
 

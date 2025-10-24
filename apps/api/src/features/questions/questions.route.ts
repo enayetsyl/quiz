@@ -3,6 +3,8 @@ import { Router } from "express";
 import { UserRole } from "@prisma/client";
 
 import { requireAuth, requireRole } from "@/features/auth/auth.middleware";
+import { internalApprovedQuestionsHandler } from "@/features/exports/exports.controller";
+import { requireInternalBearer } from "@/middlewares/internalBearerAuth";
 
 import {
   bulkDeleteQuestionsHandler,
@@ -14,6 +16,7 @@ import {
 
 const router = Router();
 
+router.get("/approved", requireInternalBearer, internalApprovedQuestionsHandler);
 router.get("/", requireAuth, listQuestionsHandler);
 
 const editorRoles = [UserRole.admin, UserRole.approver];
