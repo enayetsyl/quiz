@@ -1,6 +1,11 @@
 import { vi } from "vitest";
 
 vi.mock("@prisma/client", () => ({
+  Prisma: {
+    sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({ strings, values }),
+    join: (parts: unknown[], separator: unknown) => ({ parts, separator }),
+    empty: { strings: [], values: [] }
+  },
   PageStatus: {
     pending: "pending",
     queued: "queued",

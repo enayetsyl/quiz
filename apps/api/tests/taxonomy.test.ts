@@ -18,8 +18,12 @@ vi.mock("@prisma/client", () => {
     }
   }
 
+  const sql = (strings: TemplateStringsArray, ...values: unknown[]) => ({ strings, values });
+  const join = (parts: unknown[], separator: unknown) => ({ parts, separator });
+  const empty = { strings: [], values: [] };
+
   return {
-    Prisma: { PrismaClientKnownRequestError },
+    Prisma: { PrismaClientKnownRequestError, sql, join, empty },
     UserRole: {
       admin: "admin",
       approver: "approver"

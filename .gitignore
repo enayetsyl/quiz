@@ -50,6 +50,8 @@ jest-resolve-cache/
 
 # Images/Exports (optional, keep if generated locally)
 exports/
+!apps/api/src/features/exports/
+!apps/api/src/features/exports/**
 
 # App-specific cache
 .cache/
