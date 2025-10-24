@@ -3,6 +3,7 @@ import { Router } from "express";
 import { authRoutes } from "./auth/auth.route";
 import { healthRoutes } from "./health/health.route";
 import { taxonomyRoutes } from "./taxonomy/taxonomy.route";
+import { uploadRoutes } from "./uploads/uploads.route";
 import { ensureDefaultClassLevels } from "./taxonomy/taxonomy.service";
 import { settingsRoutes } from "./settings/settings.route";
 import { usersRoutes } from "./users/users.route";
@@ -17,6 +18,7 @@ export const registerFeatureRoutes = () => {
   router.use("/settings", settingsRoutes);
   router.use("/users", usersRoutes);
   router.use("/taxonomy", taxonomyRoutes);
+  router.use("/uploads", uploadRoutes);
 
   void ensureDefaultClassLevels().catch((error) => {
     logger.error({ error }, "Failed to seed default class levels");

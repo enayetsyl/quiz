@@ -18,7 +18,7 @@ const envSchema = z.object({
   PASSWORD_RESET_TOKEN_TTL_MINUTES: z.coerce.number().positive().default(30),
 
   AWS_REGION: z.string().default("ap-south-1"),
-  S3_BUCKET_UPLOADS: z.string().default(""),
+  S3_BUCKET_UPLOADS: z.string().default("quizgen-uploads-local"),
   S3_BUCKET_SITE: z.string().default(""),
   S3_SIGN_TTL_SEC: z.coerce.number().default(86400),
 
