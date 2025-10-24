@@ -101,6 +101,48 @@ export type UploadListQuery = {
   chapterId: string;
 };
 
+export type GenerationAttemptDto = {
+  id: string;
+  attemptNo: number;
+  model: string;
+  promptVersion: string;
+  isSuccess: boolean;
+  errorMessage: string | null;
+  requestExcerpt: string | null;
+  responseExcerpt: string | null;
+  createdAt: string;
+};
+
+export type GenerationPageDto = {
+  id: string;
+  pageNumber: number;
+  status: UploadPageStatus;
+  language: "bn" | "en" | null;
+  lastGeneratedAt: string | null;
+  questionCount: number;
+  pngUrl: string | null;
+  thumbnailUrl: string | null;
+  attempts: GenerationAttemptDto[];
+};
+
+export type GenerationStatusCounts = {
+  pending: number;
+  queued: number;
+  generating: number;
+  complete: number;
+  failed: number;
+};
+
+export type GenerationUploadOverview = {
+  id: string;
+  chapterId: string;
+  originalFilename: string;
+  createdAt: string;
+  pagesCount: number;
+  statusCounts: GenerationStatusCounts;
+  pages: GenerationPageDto[];
+};
+
 export const formatDisplayDateTime = (
   date: Date,
   locale: string = "en-GB"

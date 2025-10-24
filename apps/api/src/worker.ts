@@ -3,6 +3,8 @@ import IORedis from "ioredis";
 
 import { env } from "@/config";
 import type { RasterizationJobData } from "@/features/uploads/rasterization.queue";
+import type { GenerationJobData } from "@/features/generation/generation.queue";
+import { processGenerationAttempt, scheduleRetry } from "@/features/generation/generation.service";
 import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import { uploadToS3 } from "@/utils/s3";
@@ -11,7 +13,7 @@ import { PageStatus } from "@prisma/client";
 
 const connection = new IORedis(env.REDIS_URL);
 
-const generationQueue = new Queue("generation", { connection });
+const generationQueue = new Queue<GenerationJobData>("generation", { connection });
 const rasterizationQueue = new Queue("rasterization", { connection });
 
 const placeholderPng = Buffer.from(
@@ -23,11 +25,11 @@ const placeholderJpeg = Buffer.from(
   "base64"
 );
 
-const generationWorker = new Worker(
+const generationWorker = new Worker<GenerationJobData>(
   "generation",
   async (job) => {
-    logger.info({ jobId: job.id }, "Processing generation job");
-    // TODO: implement generation pipeline logic
+    logger.info({ jobId: job.id, pageId: job.data.pageId }, "Processing generation job");
+    await processGenerationAttempt(job.data.pageId, { scheduleRetry });
   },
   {
     connection,
@@ -65,7 +67,7 @@ const rasterizationWorker = new Worker<RasterizationJobData>(
     await prisma.page.update({
       where: { id: job.data.pageId },
       data: {
-        status: PageStatus.complete,
+        status: PageStatus.pending,
         updatedAt: new Date(),
       },
     });
