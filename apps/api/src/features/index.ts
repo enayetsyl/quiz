@@ -10,6 +10,7 @@ import { settingsRoutes } from "./settings/settings.route";
 import { usersRoutes } from "./users/users.route";
 import { questionsRoutes } from "./questions/questions.route";
 import { exportsRoutes } from "./exports/exports.route";
+import { opsRoutes } from "./ops/ops.route";
 
 import { logger } from "@/lib/logger";
 
@@ -25,6 +26,7 @@ export const registerFeatureRoutes = () => {
   router.use("/generation", generationRoutes);
   router.use("/questions", questionsRoutes);
   router.use("/exports", exportsRoutes);
+  router.use("/ops", opsRoutes);
 
   void ensureDefaultClassLevels().catch((error) => {
     logger.error({ error }, "Failed to seed default class levels");

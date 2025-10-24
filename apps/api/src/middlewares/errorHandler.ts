@@ -4,6 +4,8 @@ import { env } from "@/config";
 import { ApiError } from "@/lib/apiError";
 import { getRequestLogger } from "@/lib/requestContext";
 import { sendResponse } from "@/lib/sendResponse";
+import { getRequestContext } from "@/lib/requestContext";
+import { notifyOpsAlert } from "@/utils/opsAlert";
 
 export const errorHandler = (
   err: unknown,
@@ -28,6 +30,20 @@ export const errorHandler = (
 
   const requestLogger = getRequestLogger();
   requestLogger.error({ err, statusCode }, "Request failed");
+
+  if (statusCode >= 500) {
+    const context = getRequestContext();
+    const alertLines = [
+      `Status: ${statusCode}`,
+      `Message: ${message}`,
+      context?.requestId ? `Request ID: ${context.requestId}` : null,
+    ].filter((line): line is string => Boolean(line));
+
+    void notifyOpsAlert({
+      subject: "[QuizGen] API error detected",
+      message: alertLines.join("\n"),
+    });
+  }
 
   return sendResponse(res, statusCode, {
     success: false,

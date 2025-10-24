@@ -33,8 +33,15 @@ export const requestContextMiddleware = (
   requestContext.run({ requestId, logger: contextLogger }, () => {
     contextLogger.info("Incoming request");
 
+    const startTime = process.hrtime.bigint();
+
     res.on("finish", () => {
-      contextLogger.info({ statusCode: res.statusCode }, "Request completed");
+      const endTime = process.hrtime.bigint();
+      const durationMs = Number(endTime - startTime) / 1_000_000;
+      contextLogger.info(
+        { statusCode: res.statusCode, durationMs: Number(durationMs.toFixed(2)) },
+        "Request completed",
+      );
     });
 
     next();
