@@ -6,12 +6,11 @@ import { sendResponse } from "@/lib/sendResponse";
 
 import { getHealthStatus } from "./health.service";
 
-type HealthQuery = {
-  details?: boolean;
-};
-
 export const healthCheck = catchAsync(
-  async (req: Request<unknown, unknown, unknown, HealthQuery>, res: Response) => {
+  async (
+    req: Request<unknown, unknown, unknown, { details?: boolean }>,
+    res: Response
+  ) => {
     const showDetails = req.query.details === true;
     const data = getHealthStatus(showDetails);
 
