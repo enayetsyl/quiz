@@ -163,6 +163,31 @@ export class AxiosInstance {
 
     const requestUrl = buildURL(finalConfig.baseURL, finalConfig.url, finalConfig.params);
 
+    const shouldSendBody =
+      finalConfig.method !== undefined && finalConfig.method !== "GET" && finalConfig.data !== undefined;
+
+    let body: BodyInit | undefined;
+    if (shouldSendBody) {
+      const data = finalConfig.data as unknown;
+
+      if (typeof FormData !== "undefined" && data instanceof FormData) {
+        body = data;
+      } else if (typeof Blob !== "undefined" && data instanceof Blob) {
+        body = data;
+      } else if (data instanceof URLSearchParams) {
+        body = data;
+      } else if (ArrayBuffer.isView(data) || data instanceof ArrayBuffer) {
+        body = data as ArrayBuffer;
+      } else if (typeof data === "string") {
+        body = data;
+      } else {
+        body = JSON.stringify(data);
+        finalConfig.headers = mergeHeaders(finalConfig.headers, {
+          "Content-Type": "application/json"
+        });
+      }
+    }
+
     try {
       const response = await fetch(requestUrl, {
         method: finalConfig.method ?? "GET",
@@ -171,10 +196,7 @@ export class AxiosInstance {
             ? "include"
             : "same-origin",
         headers: mergeHeaders(this.defaultConfig.headers, finalConfig.headers),
-        body:
-          finalConfig.method && finalConfig.method !== "GET" && finalConfig.data !== undefined
-            ? JSON.stringify(finalConfig.data)
-            : undefined
+        body
       });
 
       const data = (await parseResponseBody(response)) as TData;

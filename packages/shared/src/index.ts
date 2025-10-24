@@ -63,6 +63,44 @@ export type TaxonomyResponse = {
   classes: ClassLevelDto[];
 };
 
+export type UploadPageStatus = "pending" | "queued" | "generating" | "complete" | "failed";
+
+export type UploadPageDto = {
+  id: string;
+  pageNumber: number;
+  status: UploadPageStatus;
+  pngUrl: string | null;
+  thumbnailUrl: string | null;
+  updatedAt: string;
+};
+
+export type UploadResponse = {
+  id: string;
+  classId: number;
+  subjectId: string;
+  chapterId: string;
+  originalFilename: string;
+  mimeType: string;
+  pagesCount: number;
+  createdAt: string;
+  pdfUrl: string;
+  pages: UploadPageDto[];
+};
+
+export type UploadSummaryDto = {
+  id: string;
+  chapterId: string;
+  originalFilename: string;
+  createdAt: string;
+  pagesCount: number;
+  completedPages: number;
+  pdfUrl: string;
+};
+
+export type UploadListQuery = {
+  chapterId: string;
+};
+
 export const formatDisplayDateTime = (
   date: Date,
   locale: string = "en-GB"
