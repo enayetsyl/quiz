@@ -1,16 +1,27 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import type { ReactNode } from "react";
+
+import { cn } from "@/lib/utils";
+
+import { appName } from "@quizgen/shared";
+
 import "./globals.css";
+import { AppProviders } from "./providers";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "NCTB Quiz Generator",
-  description: "Internal tooling for quiz generation and review."
+  title: appName,
+  description: "Internal tooling for quiz generation and review.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="bn">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn("min-h-screen bg-background font-sans antialiased", inter.variable)}>
+        <AppProviders>{children}</AppProviders>
+      </body>
     </html>
   );
 }
-

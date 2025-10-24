@@ -1,25 +1,19 @@
 import type { Response } from "express";
 
-type ApiMeta = {
-  page?: number;
-  limit?: number;
-  total?: number;
-  [key: string]: unknown;
-};
+import type { ApiResponsePayload } from "@quizgen/shared";
 
-type ApiResponse<T> = {
-  success: boolean;
-  message?: string;
-  data?: T;
-  meta?: ApiMeta;
-};
+export const sendResponse = <T>(
+  res: Response,
+  statusCode: number,
+  payload: ApiResponsePayload<T>
+) => {
+  const { success, message, data, meta } = payload;
 
-export const sendResponse = <T>(res: Response, statusCode: number, payload: ApiResponse<T>) => {
   return res.status(statusCode).json({
-    success: payload.success,
-    message: payload.message ?? null,
-    data: payload.data ?? null,
-    meta: payload.meta ?? null
+    success,
+    message: message ?? null,
+    data: data ?? null,
+    meta: meta ?? null
   });
 };
 
