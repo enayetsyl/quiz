@@ -1,3 +1,38 @@
+import { vi } from "vitest";
+
+vi.mock("@prisma/client", () => ({
+  UserRole: {
+    admin: "admin",
+    approver: "approver"
+  }
+}));
+
+vi.mock("../src/lib/prisma", () => {
+  const user = {
+    findUnique: vi.fn(),
+    update: vi.fn(),
+    findMany: vi.fn(),
+    create: vi.fn()
+  };
+  const passwordResetToken = {
+    create: vi.fn(),
+    findFirst: vi.fn(),
+    update: vi.fn()
+  };
+  const appSettings = {
+    upsert: vi.fn(),
+    update: vi.fn()
+  };
+
+  return {
+    prisma: {
+      user,
+      passwordResetToken,
+      appSettings
+    }
+  };
+});
+
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 

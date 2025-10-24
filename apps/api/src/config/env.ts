@@ -12,6 +12,11 @@ const envSchema = z.object({
   SHADOW_DATABASE_URL: z.string().optional(),
   REDIS_URL: z.string().default("redis://localhost:6379"),
 
+  AUTH_TOKEN_SECRET: z.string().min(16).default("local-dev-secret-key"),
+  AUTH_TOKEN_TTL_MINUTES: z.coerce.number().positive().default(60),
+  AUTH_COOKIE_NAME: z.string().default("quizgen_session"),
+  PASSWORD_RESET_TOKEN_TTL_MINUTES: z.coerce.number().positive().default(30),
+
   AWS_REGION: z.string().default("ap-south-1"),
   S3_BUCKET_UPLOADS: z.string().default(""),
   S3_BUCKET_SITE: z.string().default(""),
