@@ -15,6 +15,7 @@
   "scripts": {
     "prebuild": "tsc --build --clean tsconfig.json",
     "build": "tsc --project tsconfig.json",
+    "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
     "test": "echo 'no tests for axios stub'"
   },

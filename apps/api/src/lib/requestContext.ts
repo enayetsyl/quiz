@@ -1,6 +1,5 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { randomUUID } from "node:crypto";
-
 import type { NextFunction, Request, Response } from "express";
 import type { Logger } from "pino";
 
