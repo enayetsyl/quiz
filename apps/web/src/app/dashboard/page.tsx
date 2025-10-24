@@ -1,67 +1,62 @@
-import Link from "next/link";
+'use client';
 
-import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
-import styles from "@/app/dashboard/dashboard.module.css";
+import { useEffect } from 'react';
+
+import { useRouter } from 'next/navigation';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+
+import { useLogoutMutation, useSessionQuery } from '@/features/auth/hooks/use-session-query';
+import { SettingsPanel } from '@/features/settings/components/settings-panel';
+import { UserManagementPanel } from '@/features/users/components/user-management-panel';
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const { data: user, isLoading } = useSessionQuery();
+  const logoutMutation = useLogoutMutation();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.replace('/login');
+    }
+  }, [isLoading, user, router]);
+
+  const handleLogout = async () => {
+    await logoutMutation.mutateAsync();
+    router.replace('/login');
+  };
+
+  if (isLoading || !user) {
+    return (
+      <main className="flex min-h-screen items-center justify-center px-4 py-8">
+        <p className="text-sm text-muted-foreground">Checking your session…</p>
+      </main>
+    );
+  }
+
+  const isAdmin = user.role === 'admin';
+
   return (
-    <main className={styles.main} id="top">
-      <header className={styles.header}>
-        <h2 className={styles.title}>Operations overview</h2>
-        <p className={styles.subtitle}>
-          This dashboard will become the command center for uploads, queue orchestration, and
-          editorial review. For now it highlights the completed groundwork and the next milestones.
-        </p>
-      </header>
-      <section className={styles.grid}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Next steps</CardTitle>
-            <CardDescription>Upcoming development milestones.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className={styles.list}>
-              <li>Implement authentication with role-aware access control.</li>
-              <li>Build taxonomy management for classes, subjects, and chapters.</li>
-              <li>Wire PDF ingestion and rasterization pipelines.</li>
-            </ul>
-            <Link
-              href="#top"
-              className={buttonVariants({ variant: "secondary", size: "sm" })}
-              style={{ marginTop: "18px", display: "inline-flex" }}
-            >
-              Back to top
-            </Link>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Environment checklist</CardTitle>
-            <CardDescription>What is already in place.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className={styles.list}>
-              <li>Express API with health endpoint, structured logging, and request tracing.</li>
-              <li>Prisma schema aligned with the reference PostgreSQL database.</li>
-              <li>Next.js foundation powered by our shared UI components and query client.</li>
-            </ul>
-            <Link
-              href="/"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-              style={{ marginTop: "18px", display: "inline-flex" }}
-            >
-              Back to home
-            </Link>
-          </CardContent>
-        </Card>
-      </section>
+    <main className="min-h-screen px-4 py-8">
+      <div className="mx-auto flex w-full max-w-4xl flex-col space-y-6">
+        <header className="flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-lg font-bold">Operations dashboard</h1>
+            <p className="text-sm text-muted-foreground">
+              Review system settings, monitor access, and keep the generation pipeline healthy.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Badge variant="outline">{isAdmin ? 'Admin' : 'Approver'}</Badge>
+            <Button variant="secondary" onClick={handleLogout} disabled={logoutMutation.isPending}>
+              {logoutMutation.isPending ? 'Signing out…' : 'Sign out'}
+            </Button>
+          </div>
+        </header>
+        <SettingsPanel canManage={isAdmin} />
+        {isAdmin ? <UserManagementPanel /> : null}
+      </div>
     </main>
   );
 }
