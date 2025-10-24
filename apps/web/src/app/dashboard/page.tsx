@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 
 import { useLogoutMutation, useSessionQuery } from '@/features/auth/hooks/use-session-query';
 import { GenerationDashboardPanel } from '@/features/generation/components/generation-dashboard-panel';
+import { EditorialWorkspace } from '@/features/questions/components/editorial-workspace';
 import { SettingsPanel } from '@/features/settings/components/settings-panel';
 import { TaxonomyManager } from '@/features/taxonomy/components/taxonomy-manager';
 import { UploadWorkflowPanel } from '@/features/uploads/components/upload-workflow-panel';
@@ -60,6 +61,7 @@ export default function DashboardPage() {
         <SettingsPanel canManage={isAdmin} />
         <UploadWorkflowPanel />
         <GenerationDashboardPanel />
+        <EditorialWorkspace />
         {isAdmin ? (
           <div className="space-y-6">
             <UserManagementPanel />

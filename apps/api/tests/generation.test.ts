@@ -52,6 +52,7 @@ const prismaMock = vi.hoisted(() => {
   const question = {
     deleteMany: vi.fn(),
     createMany: vi.fn(),
+    findFirst: vi.fn(),
   };
 
   const llmUsageEvent = {
@@ -94,6 +95,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   getGenerationOverview,
   processGenerationAttempt,
+  regeneratePage,
   retryFailedPage,
   scheduleRetry,
   startUploadGeneration,
@@ -104,6 +106,7 @@ describe("generation service", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     createPresignedUrl.mockResolvedValue("https://signed.example");
+    prismaMock.question.findFirst.mockResolvedValue(null);
   });
 
   afterEach(() => {
@@ -308,5 +311,17 @@ describe("generation service", () => {
     ]);
 
     randomSpy.mockRestore();
+  });
+
+  it("prevents regeneration when a page contains locked questions", async () => {
+    prismaMock.page.findUnique.mockResolvedValueOnce({
+      id: "page-locked",
+      uploadId: "upload-locked",
+    });
+    prismaMock.question.findFirst.mockResolvedValueOnce({ id: "question-locked" });
+
+    await expect(regeneratePage("page-locked")).rejects.toThrow(
+      "This page contains questions already published to the Question Bank",
+    );
   });
 });
