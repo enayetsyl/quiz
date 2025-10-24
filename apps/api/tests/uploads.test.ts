@@ -4,7 +4,26 @@ vi.mock("@prisma/client", () => ({
   Prisma: {
     sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({ strings, values }),
     join: (parts: unknown[], separator: unknown) => ({ parts, separator }),
-    empty: { strings: [], values: [] }
+    empty: { strings: [], values: [] },
+    Decimal: class Decimal {
+      private readonly value: number;
+
+      constructor(value: string | number) {
+        this.value = Number(value);
+      }
+
+      valueOf() {
+        return this.value;
+      }
+
+      toNumber() {
+        return this.value;
+      }
+
+      toString() {
+        return String(this.value);
+      }
+    },
   },
   PageStatus: {
     pending: "pending",

@@ -3,6 +3,8 @@ import IORedis from "ioredis";
 
 import { env } from "@/config";
 
+import type { QueueMetricDto } from "@quizgen/shared";
+
 export type RasterizationJobData = {
   uploadId: string;
   pageId: string;
@@ -14,6 +16,16 @@ export type RasterizationJobData = {
 };
 
 const queueName = "rasterization";
+
+const buildDefaultMetrics = (): QueueMetricDto => ({
+  name: queueName,
+  waiting: 0,
+  active: 0,
+  delayed: 0,
+  failed: 0,
+  completed: 0,
+  paused: false,
+});
 
 let queue: Queue<RasterizationJobData> | null = null;
 
@@ -49,6 +61,29 @@ export const enqueueRasterizationJobs = async (jobs: RasterizationJobData[]) => 
       removeOnFail: false,
     }))
   );
+};
+
+export const getRasterizationQueueMetrics = async (): Promise<QueueMetricDto> => {
+  const activeQueue = getQueue();
+
+  if (!activeQueue) {
+    return buildDefaultMetrics();
+  }
+
+  const [counts, paused] = await Promise.all([
+    activeQueue.getJobCounts("waiting", "active", "delayed", "failed", "completed"),
+    activeQueue.isPaused(),
+  ]);
+
+  return {
+    name: queueName,
+    waiting: counts.waiting ?? 0,
+    active: counts.active ?? 0,
+    delayed: counts.delayed ?? 0,
+    failed: counts.failed ?? 0,
+    completed: counts.completed ?? 0,
+    paused,
+  };
 };
 
 export const closeRasterizationQueue = async () => {

@@ -21,9 +21,28 @@ vi.mock("@prisma/client", () => {
   const sql = (strings: TemplateStringsArray, ...values: unknown[]) => ({ strings, values });
   const join = (parts: unknown[], separator: unknown) => ({ parts, separator });
   const empty = { strings: [], values: [] };
+  class Decimal {
+    private readonly value: number;
+
+    constructor(value: string | number) {
+      this.value = Number(value);
+    }
+
+    valueOf() {
+      return this.value;
+    }
+
+    toNumber() {
+      return this.value;
+    }
+
+    toString() {
+      return String(this.value);
+    }
+  }
 
   return {
-    Prisma: { PrismaClientKnownRequestError, sql, join, empty },
+    Prisma: { PrismaClientKnownRequestError, sql, join, empty, Decimal },
     UserRole: {
       admin: "admin",
       approver: "approver"

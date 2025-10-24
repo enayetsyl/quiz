@@ -6,6 +6,7 @@ import {
   OptionKey,
   PageStatus,
   QuestionStatus,
+  Prisma,
 } from "@prisma/client";
 
 import type { AuthenticatedUser } from "@/features/auth/auth.service";
@@ -13,6 +14,8 @@ import { ApiError } from "@/lib/apiError";
 import { logger } from "@/lib/logger";
 import { prisma } from "@/lib/prisma";
 import { createPresignedUrl } from "@/utils/s3";
+import { estimateLlmCostUsd } from "@/utils/llmCost";
+import { notifyOpsAlert } from "@/utils/opsAlert";
 
 import type {
   GenerationAttemptDto,
@@ -357,6 +360,11 @@ export const handleGenerationSuccess = async (
         model: MODEL_NAME,
         tokensIn: payload.tokensIn ?? null,
         tokensOut: payload.tokensOut ?? null,
+        estimatedCostUsd:
+          (() => {
+            const estimatedCost = estimateLlmCostUsd(payload.tokensIn, payload.tokensOut);
+            return estimatedCost > 0 ? new Prisma.Decimal(estimatedCost.toFixed(5)) : null;
+          })(),
       },
     });
   });
@@ -476,6 +484,15 @@ export const processGenerationAttempt = async (
         },
       });
       logger.error({ pageId: page.id, error: errorMessage }, "Generation failed after maximum attempts");
+      void notifyOpsAlert({
+        subject: "[QuizGen] Generation job exhausted retries",
+        message: [
+          `Page ID: ${page.id}`,
+          `Upload ID: ${page.uploadId}`,
+          `Attempts: ${attemptNo}`,
+          `Last error: ${errorMessage}`,
+        ].join("\n"),
+      });
       return;
     }
 

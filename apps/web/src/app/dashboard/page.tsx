@@ -15,6 +15,7 @@ import { SettingsPanel } from '@/features/settings/components/settings-panel';
 import { TaxonomyManager } from '@/features/taxonomy/components/taxonomy-manager';
 import { UploadWorkflowPanel } from '@/features/uploads/components/upload-workflow-panel';
 import { UserManagementPanel } from '@/features/users/components/user-management-panel';
+import { OpsPanel } from '@/features/ops/components/ops-panel';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -59,6 +60,7 @@ export default function DashboardPage() {
             </Button>
           </div>
         </header>
+        {isAdmin ? <OpsPanel /> : null}
         <SettingsPanel canManage={isAdmin} />
         <ExportPanel />
         <UploadWorkflowPanel />

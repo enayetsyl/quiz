@@ -4,7 +4,26 @@ vi.mock("@prisma/client", () => ({
   Prisma: {
     sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({ strings, values }),
     join: (parts: unknown[], separator: unknown) => ({ parts, separator }),
-    empty: { strings: [], values: [] }
+    empty: { strings: [], values: [] },
+    Decimal: class Decimal {
+      private readonly value: number;
+
+      constructor(value: string | number) {
+        this.value = Number(value);
+      }
+
+      valueOf() {
+        return this.value;
+      }
+
+      toNumber() {
+        return this.value;
+      }
+
+      toString() {
+        return String(this.value);
+      }
+    }
   },
   PageStatus: {
     pending: "pending",
@@ -93,6 +112,11 @@ vi.mock("../src/features/generation/generation.queue", () => ({
 const geminiGenerate = vi.hoisted(() => vi.fn());
 vi.mock("../src/features/generation/gemini.client", () => ({
   geminiClient: { generateQuestions: geminiGenerate },
+}));
+
+const notifyOpsAlert = vi.hoisted(() => vi.fn());
+vi.mock("../src/utils/opsAlert", () => ({
+  notifyOpsAlert,
 }));
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -248,6 +272,9 @@ describe("generation service", () => {
       data: expect.objectContaining({ isSuccess: true }),
     });
     expect(prismaMock.llmUsageEvent.create).toHaveBeenCalled();
+    const usageCall = prismaMock.llmUsageEvent.create.mock.calls[0]?.[0];
+    expect(usageCall?.data?.estimatedCostUsd).toBeDefined();
+    expect(notifyOpsAlert).not.toHaveBeenCalled();
   });
 
   it("schedules retries when generation fails", async () => {
@@ -278,6 +305,41 @@ describe("generation service", () => {
       data: expect.objectContaining({ errorMessage: "LLM error" }),
     });
     expect(schedule).toHaveBeenCalledWith("page-1", 1);
+    expect(notifyOpsAlert).not.toHaveBeenCalled();
+  });
+
+  it("notifies ops when a page exhausts all retries", async () => {
+    prismaMock.page.findUnique.mockResolvedValue({
+      id: "page-1",
+      uploadId: "upload-1",
+      pageNumber: 1,
+      language: "en",
+      upload: {
+        id: "upload-1",
+        classId: 6,
+        subjectId: "subject-1",
+        chapterId: "chapter-1",
+      },
+      pageGenerationAttempts: [{ attemptNo: 1 }, { attemptNo: 2 }],
+    });
+
+    prismaMock.pageGenerationAttempt.create.mockResolvedValue({ id: "attempt-3" });
+    prismaMock.page.update.mockResolvedValue({});
+    geminiGenerate.mockRejectedValue(new Error("Persistent failure"));
+
+    const schedule = vi.fn();
+
+    await processGenerationAttempt("page-1", { scheduleRetry: schedule });
+
+    expect(schedule).not.toHaveBeenCalled();
+    expect(
+      prismaMock.page.update.mock.calls.some((call) => call[0].data.status === PageStatus.failed),
+    ).toBe(true);
+    expect(notifyOpsAlert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        subject: "[QuizGen] Generation job exhausted retries",
+      }),
+    );
   });
 
   it("requeues failed pages", async () => {

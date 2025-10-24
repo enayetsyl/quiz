@@ -198,6 +198,42 @@ export type QuestionBankExportFilters = {
   pageNumber?: number;
 };
 
+export type QueueMetricDto = {
+  name: string;
+  waiting: number;
+  active: number;
+  delayed: number;
+  failed: number;
+  completed: number;
+  paused: boolean;
+};
+
+export type LlmUsageSummaryDto = {
+  windowHours: number;
+  tokensIn: number;
+  tokensOut: number;
+  estimatedCostUsd: number;
+  eventCount: number;
+};
+
+export type OpsRecentErrorDto = {
+  id: string;
+  category: "generation";
+  message: string;
+  occurredAt: string;
+  pageId: string | null;
+  pageNumber: number | null;
+  uploadId: string | null;
+  attemptNo: number | null;
+};
+
+export type OpsOverviewResponse = {
+  generatedAt: string;
+  queues: QueueMetricDto[];
+  llmUsage: LlmUsageSummaryDto;
+  recentErrors: OpsRecentErrorDto[];
+};
+
 export type QuestionBankExportRow = {
   questionBankId: string;
   subjectShortCode: string | null;
