@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 
 import { useLogoutMutation, useSessionQuery } from '@/features/auth/hooks/use-session-query';
 import { SettingsPanel } from '@/features/settings/components/settings-panel';
+import { TaxonomyManager } from '@/features/taxonomy/components/taxonomy-manager';
 import { UserManagementPanel } from '@/features/users/components/user-management-panel';
 
 export default function DashboardPage() {
@@ -55,7 +56,12 @@ export default function DashboardPage() {
           </div>
         </header>
         <SettingsPanel canManage={isAdmin} />
-        {isAdmin ? <UserManagementPanel /> : null}
+        {isAdmin ? (
+          <div className="space-y-6">
+            <UserManagementPanel />
+            <TaxonomyManager />
+          </div>
+        ) : null}
       </div>
     </main>
   );

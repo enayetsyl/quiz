@@ -34,6 +34,35 @@ export type HealthCheckResponse = {
   info?: Record<string, unknown>;
 };
 
+export type ChapterDto = {
+  id: string;
+  subjectId: string;
+  name: string;
+  ordinal: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type SubjectDto = {
+  id: string;
+  classId: number;
+  name: string;
+  code: string | null;
+  createdAt: string;
+  updatedAt: string;
+  chapters: ChapterDto[];
+};
+
+export type ClassLevelDto = {
+  id: number;
+  displayName: string;
+  subjects: SubjectDto[];
+};
+
+export type TaxonomyResponse = {
+  classes: ClassLevelDto[];
+};
+
 export const formatDisplayDateTime = (
   date: Date,
   locale: string = "en-GB"
