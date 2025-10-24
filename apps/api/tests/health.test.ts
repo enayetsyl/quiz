@@ -1,11 +1,31 @@
 import { vi } from "vitest";
 
-vi.mock("@prisma/client", () => ({
-  UserRole: {
-    admin: "admin",
-    approver: "approver"
+vi.mock("@prisma/client", () => {
+  class PrismaClientKnownRequestError extends Error {
+    public readonly code: string;
+    public readonly clientVersion: string;
+    public readonly meta?: Record<string, unknown>;
+
+    constructor(
+      message: string,
+      options: { code: string; clientVersion: string; meta?: Record<string, unknown> }
+    ) {
+      super(message);
+      this.code = options.code;
+      this.clientVersion = options.clientVersion;
+      this.meta = options.meta;
+      Object.setPrototypeOf(this, PrismaClientKnownRequestError.prototype);
+    }
   }
-}));
+
+  return {
+    Prisma: { PrismaClientKnownRequestError },
+    UserRole: {
+      admin: "admin",
+      approver: "approver"
+    }
+  };
+});
 
 vi.mock("../src/lib/prisma", () => {
   const user = {
@@ -23,12 +43,33 @@ vi.mock("../src/lib/prisma", () => {
     upsert: vi.fn(),
     update: vi.fn()
   };
+  const classLevel = {
+    findMany: vi.fn(),
+    upsert: vi.fn().mockResolvedValue(null),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn()
+  };
+  const subject = {
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn()
+  };
+  const chapter = {
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn()
+  };
 
   return {
     prisma: {
       user,
       passwordResetToken,
-      appSettings
+      appSettings,
+      classLevel,
+      subject,
+      chapter,
+      $transaction: vi.fn(async () => undefined)
     }
   };
 });
